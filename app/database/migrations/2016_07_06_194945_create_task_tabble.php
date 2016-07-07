@@ -12,7 +12,7 @@ class CreateTaskTabble extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('takss', function(Blueprint $table)
+		Schema::create('tasks', function(Blueprint $table)
         {
             $table->increments('id');
 
@@ -20,6 +20,7 @@ class CreateTaskTabble extends Migration {
             $table->string('description', 255);
             $table->dateTime('initialDate');
             $table->dateTime('endDate');
+            $table->string('status', 10);
             $table->foreign('id_user')->references('id')->on('users');
             $table->timestamps();
         });
@@ -32,7 +33,7 @@ class CreateTaskTabble extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('taks');
+		Schema::drop('tasks');
 	}
 
 }

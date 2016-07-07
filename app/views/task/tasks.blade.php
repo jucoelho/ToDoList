@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>MyParkingLotSpot</title>
+    <title>Gerenciardor de Tarefas</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -29,11 +29,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc8X_HhiYzNyW7ArfVuBzqQl6qMQYijGI"></script>
-    
-<script src="{!! URL::to('/')!!}/js/jquery.min.js"></script>
-
-
+   
 </head>
 
 <body>
@@ -50,7 +46,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Estacionamento</a>
+                <a class="navbar-brand" href="index.html">Lista de Tarefas</a>
 
             </div>
             <!-- Top Menu Items -->
@@ -77,10 +73,6 @@
                     <li class="active">
                         <a href="#"><i class="fa fa-fw fa-dashboard"></i> Sobre</a>
                     </li>
-                    <li>
-                        <a href="#"><i class="fa fa-fw fa-bar-chart-o" ></i> Estacionamento</a>
-                    </li>
-                  
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -93,88 +85,117 @@
                 <!-- Page Heading -->
                 <div class="alert alert-info alert-dismissible" hidden="true" role="alert" id="alterta">...</div>
                 <div class="row">
+                @if (Session::has('message'))
+                <div class="alert alert-info">{{ Session::get('message') }}</div>
+                @endif
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Gerencie sua vaga <!DOCTYPE html>
-                            <html lang="en">
-                            <head>
-                                <meta charset="UTF-8">
-                                <title>Document</title>
-                            </head>
-                            <body>
-                                
-                            </body>
+                            Gerencie sua vaga 
                             </html>
                         </h1>
                     </div>
                 </div>
                 <div>
                 <meta name="csrf-token" content="{{ csrf_token() }}" />
-                 <a  id="botao" class="button"> Indicar Ocupação /</a>
-                  <a data-toggle="modal" data-target="#myModal">Cadastrar Veículo</a>
-                  <input type="hidden" id="user-id" data-url="{!! URL::route('map.send') !!}" value="{{ Auth::user()->id }}" />
+                  <a data-toggle="modal" data-target="#myModal">Cadastrar Tarefa</a>
+                  <input type="hidden" id="user-id"  value="{{ Auth::user()->id }}" />
                 </div>
                 <br>
-                <div class="row"  id="googleMap"  style="widows: 10px;00px;height:450px;">
-                    
+                <div class="row"   style="widows: 10px;00px;height:476px;">
+                   
+                    <table class="table">
+                            <thead>
+                              <tr>
+                              <th>Código</th>
+                                <th>Título</th>
+                                <th>Descrição</th>
+                                <th>Data Inicial</th>
+                                <th>Data Final</th>
+                                <th>Status</th>
+                                <th>Ação</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($tasks as $key => $value)
+                              <tr>
+                                <td><a href="task/show/{{ $value->id }}">{{ $value->id}}</a></td>
+                                <td>{{ $value->title }}</td>
+                                <td>{{ $value->description }}</td>
+                                <td>{{ $value->initialDate }}</td>
+                                <td>{{ $value->endDate }}</td>
+                                <td>{{ $value->status }}</td>
+                                @if($value->id_user == Auth::user()->id)
+                                <td><a href="/task/edit/{{ $value->id }}">Editar</a> /<a href="/task/delete/{{ $value->id }}">Excluir</a>  </td>
+                                @else
+                                <td> - </td>
+                                @endif
+                              </tr>
+                              @endforeach
+                            </tbody>
+                          </table>
                 </div>
-                <!-- /.row -->
-
-               
-                <!-- /.row -->
-
             </div>
-            <!-- /.container-fluid -->
-
         </div>
-        <!-- /#page-wrapper -->
-
     </div>
-    <!-- /#wrapper -->
+    
 <div class="modal fade"  id="myModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Cadastro de Veículo</h4>
+        <h4 class="modal-title">Cadastro de Tarefa</h4>
       </div>
       <div class="modal-body">
-        <form class="form-horizontal" role="form" method="POST" action="#">
+        <form class="form-horizontal" role="form" method="POST" action="{{ url('/task/create') }}">
+        
         <div class="form-group">
-                <label class="col-md-4 control-label">Placa</label>
+             <input type="hidden" name="id_user"  value="{{ Auth::user()->id }}" />
+        </div>
+
+        <div class="form-group">
+                <label class="col-md-4 control-label">Titulo</label>
                 <div class="col-md-6">
-                    <input type="text" class="form-control" name="palca" id="palcaVeiculo">
+                    <input type="text" class="form-control" name="title" >
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="col-md-4 control-label">Ano</label>
+                <label class="col-md-4 control-label">Descrição</label>
                 <div class="col-md-6">
-                    <input type="email" class="form-control" name="ano" id="anoVeiculo" >
+                    <input type="text" class="form-control" name="description"  >
                 </div>
             </div>
 
-
-             <div class="form-group">
-              <label  class="col-md-4 control-label"  for="sel1">Marca:</label>
-              <select  id="sel1" class="marcaVeiculo" id="marcaVeiculo">
-                <option value="0"></option>
-                <option value="1">Fiat</option>
-                <option value="3">Ford</option>
-                <option value="2">Hyundai</option>
-            </select>
+            <div class="form-group">
+              <label  class="col-md-4 control-label"  for="sel1">Status</label>
+              <select  id="sel1" class="statusTarefa" name="statusTarefa">
+                <option value="0">Criada</option>
+                <option value="1">Executando</option>
+                <option value="2">Finalizada</option>
+                </select>
             </div>
 
             <div class="form-group">
-              <label  class="col-md-4 control-label" for="sel1">Modelo:</label>
-              <select  id="sel1" class="modelo"></select>
+                <label class="col-md-4 control-label">Data Inicial</label>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" name="initialDate" placeholder="xx/xx/xxxx" >
+                </div>
             </div>
-            </form>
-      </div>
-      <div class="modal-footer">
+
+            <div class="form-group">
+                <label class="col-md-4 control-label">Data Final</label>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" name="endDate"  placeholder="xx/xx/xxxx">
+                </div>
+            </div>
+
+      <div class="form-group">
         <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-        <button type="button" class="btn btn-primary" id="cadastrarVeiculo">Cadastrar</button>
+        <button type="submit" class="btn btn-primary" id="cadastrarVeiculo">Cadastrar</button>
+      </div> 
+        </form>
       </div>
+      
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -182,12 +203,12 @@
     <script src="js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="{!! URL::to('/')!!}/js/bootstrap.min.js"></script>
-    <script src="{!! URL::to('/')!!}/js/script/principal.js"></script>
+    <script src="{{ URL::to('/')}}/js/bootstrap.min.js"></script>
+    <script src="{{ URL::to('/')}}/js/script/principal.js"></script>
     <!-- Morris Charts JavaScript -->
-    <script src="{!! URL::to('/')!!}/js/plugins/morris/raphael.min.js"></script>
-    <script src="{!! URL::to('/')!!}/js/plugins/morris/morris.min.js"></script>
-    <script src="{!! URL::to('/')!!}/js/plugins/morris/morris-data.js"></script>
+    <script src="{{ URL::to('/')}}/js/plugins/morris/raphael.min.js"></script>
+    <script src="{{ URL::to('/')}}/js/plugins/morris/morris.min.js"></script>
+    <script src="{{ URL::to('/')}}/js/plugins/morris/morris-data.js"></script>
 
 </body>
 </html>

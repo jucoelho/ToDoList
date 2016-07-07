@@ -9,8 +9,8 @@
     <title>@yield('title','Login')</title>
 
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/main.css" rel="stylesheet">
+    <link href="{{asset('/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{asset('/css/main.css')}}" rel="stylesheet">
     <link href="{{ asset('/css/login.css')}}" rel="stylesheet">
 
 
@@ -64,10 +64,7 @@
                 <div class="col-md-6 col-md-offset-4">
                     <div class="checkbox">
                         <label>
-                            
                             <input type="checkbox" name="remember"> Lembre-me
-                            
-                             
                         </label>
                     </div>
                 </div>
@@ -77,13 +74,7 @@
             <div class="form-group">
                 <div class="col-md-6 col-md-offset-4">
                     <button type="submit" class="btn btn-primary">Entrar</button>
-                    
-                        
                      <a class="btn btn-link" href="">Esqueci minha senha</a>
-                    
-                    
-                    
-
                 </div>
             </div>
         </form>

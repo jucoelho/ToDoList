@@ -10,7 +10,7 @@ class UserController extends \BaseController {
 	 */
 	public function index()
 	{
-		//
+		return View::make('user/login');
 	}
 
 
@@ -35,17 +35,6 @@ class UserController extends \BaseController {
 
 
 	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
-
-
-	/**
 	 * Display the specified resource.
 	 *
 	 * @param  int  $id
@@ -53,7 +42,8 @@ class UserController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+		$user = User::find($id);
+		return View::make('user.resetUser')->with('user', $user);
 	}
 
 
@@ -65,21 +55,13 @@ class UserController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		$user = User::find($id);
+		$user->name = Input::get('name');
+        $user->email = Input::get('email');
+        $user->password = Hash::make(Input::get('password'));
+        $user->save();
+        return Redirect::to('/task')->with('message', 'Conta cadastrada com sucesso!');
 	}
-
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
 
 	/**
 	 * Remove the specified resource from storage.
@@ -89,14 +71,20 @@ class UserController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		$user = User::find($id);
+		$user->delete();
+		return Redirect::to('/')->with('message', 'Usuário excluido com sucesso !');
 	}
   
   	public function postLogin()
     {
         if (Auth::attempt(array('email' => Input::get('email'), 'password' => Input::get('password')))) {
+            $tasks = Task::all();
             return Redirect::to('/task');
-        } else {
+
+        } 
+        else {
+
             return Redirect::to('/')
                             ->with('message', 'Email/senha não econtrado(s) !')
                             ->withInput();
